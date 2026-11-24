@@ -1,12 +1,11 @@
 import './App.css'
+import WalletPage from './pages/wallet/WalletPage'
 
 function App() {
 
   return (
     <>
-      <div className="App">
-        <h1>Portfolio</h1>
-      </div>
+      <WalletPage />
     </>
   )
 }
