@@ -1,5 +1,5 @@
 export interface Holding {
     id: number,
-    name: string;
+    assetName: string;
     amount: number;
 }

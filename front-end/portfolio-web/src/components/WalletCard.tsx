@@ -1,5 +1,7 @@
 import { useState } from "react"
 import type { Wallet } from "../types/Wallet";
+import HoldingForm from "./HoldingForm";
+import type { Holding } from "../types/Holding";
 
 interface WalletCardProps {
     wallet: Wallet,
@@ -7,9 +9,11 @@ interface WalletCardProps {
 }
 
 export default function WalletCard({ wallet, onUpdate }: WalletCardProps) {
-    const [addInputAmount, setAddInputAmount] = useState('');
+    const [isHoldingModalOpen, setHoldingModal] = useState(false)
 
-    const addAssetAmount = (holdingId: number, newAmount: number) => {
+    const [additionalValue, setAdditionalValue] = useState('');
+
+    const addHoldingAmount = (holdingId: number, newAmount: number) => {
         onUpdate({...wallet,
             holdings: wallet.holdings.map(holding => (
                 holding.id === holdingId ? { ...holding, amount: holding.amount + newAmount } : holding
@@ -17,20 +21,39 @@ export default function WalletCard({ wallet, onUpdate }: WalletCardProps) {
         })
     }
 
-    const updateAssetAmount = (holdingId: number, amount: number) => {
+    const updateHoldingAmount = (holdingId: number, newAmount: number) => {
         onUpdate({
             ...wallet,
             holdings: wallet.holdings.map(holding =>
-                holding.id === holdingId ? { ...holding, amount } : holding
+                holding.id === holdingId ? { ...holding, newAmount } : holding
             ),
         });
     };
+
+    const addHolding = (assetName: string, amount: number) => {
+        const newHolding: Holding = {
+            id: 1,
+            assetName: assetName,
+            amount: amount
+        };
+
+        onUpdate({
+            ...wallet,
+            holdings: wallet.holdings.concat(newHolding)
+        })
+    }
 
     return (
     <>
     <section className={wallet.id.toString()}>
         {wallet.id}
         <h2>{wallet.bank}</h2>
+        <button onClick={() => setHoldingModal(!isHoldingModalOpen)}>Add holding</button>
+        {isHoldingModalOpen ? 
+            <HoldingForm
+                onCreateHolding={(assetName, assetAmount) => (addHolding(assetName, assetAmount))}/> 
+            : <></>
+        }
         <table>
             <thead>
                 <tr>
@@ -42,13 +65,13 @@ export default function WalletCard({ wallet, onUpdate }: WalletCardProps) {
             <tbody>
                 {wallet.holdings.map(holding => (
                     <tr>
-                        <td>{holding.name}</td>
+                        <td>{holding.assetName}</td>
                         <td>
-                            <input type="number" onChange={e => updateAssetAmount(holding.id, Number(e.target.value))} value={holding.amount}/>
+                            <input type="number" onChange={e => updateHoldingAmount(holding.id, Number(e.target.value))} value={holding.amount}/>
                         </td>
                         <td>
-                            <input type="number" onChange={e => setAddInputAmount(e.target.value)}/>
-                            <button onClick={() => addAssetAmount(holding.id, Number(addInputAmount))}>Add value</button>
+                            <input type="number" onChange={e => setAdditionalValue(e.target.value)}/>
+                            <button onClick={() => addHoldingAmount(holding.id, Number(additionalValue))}>Add value</button>
                         </td>
                     </tr>
                 ))}
