@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Bank, isValidBank } from "../constants/Bank";
+import type { Wallet } from "../types/Wallet";
 
 interface WalletFormProps {
-    onCreateWallet: (bank: Bank, walletName: string) => void
+    wallets: Wallet[],
+    onCreate: (newWallet: Wallet) => void
 }
 
-export default function WalletForm({ onCreateWallet } : WalletFormProps) {
+export default function WalletForm({ wallets, onCreate } : WalletFormProps) {
     const [bank, setBank] = useState<Bank>();
     const [walletName, setWalletName] = useState("");
 
@@ -13,7 +15,14 @@ export default function WalletForm({ onCreateWallet } : WalletFormProps) {
         e.preventDefault();
 
         if(isValidBank(bank)) {
-            onCreateWallet(bank, walletName);
+            const newWallet: Wallet = {
+                id: wallets.length + 1,
+                bank: bank,
+                name: walletName,
+                holdings: []
+            }
+
+            onCreate(newWallet)
         }
     }
 
