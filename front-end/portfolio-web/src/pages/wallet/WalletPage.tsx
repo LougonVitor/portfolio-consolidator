@@ -2,18 +2,19 @@ import { useState } from "react"
 import type { Wallet } from "../../interfaces/Wallet";
 import WalletCard from "../../components/WalletCard";
 import WalletForm from "../../components/WalletForm";
+import { Bank } from "../../constants/Bank";
 
 function WalletPage() {
 	
 	const [wallets, setWallet] = useState<Wallet[]>([
-		{ id: 1, bank: 'INTER', name: 'Exchange program', holdings: [{name: 'test', amount: 1200}]}
-		, { id: 2, bank: 'ITAU', name: 'Long term', holdings: [{name: 'test', amount: 1200}]}
+		{ id: 1, bank: Bank.Inter, name: 'Exchange program', holdings: [{name: 'test', amount: 1200}]}
+		, { id: 2, bank: Bank.Itau, name: 'Long term', holdings: [{name: 'test', amount: 1200}]}
 	]);
 
-	const createWallet = (bankName: string, walletName: string) => {
+	const createWallet = (bank: Bank, walletName: string) => {
 		const newWallet: Wallet = {
 			id: wallets.length + 1,
-			bank: bankName,
+			bank: bank,
 			name: walletName,
 			holdings: []
 		}
@@ -45,7 +46,7 @@ function WalletPage() {
 	<div>
 		<h1>Porftolio</h1>
 		
-		<WalletForm onCreateWallet={(bankName, walletName) => createWallet(bankName, walletName)} />
+		<WalletForm onCreateWallet={(bank, walletName) => createWallet(bank, walletName)} />
 
 		{wallets.map(wallet => (
 			<WalletCard
